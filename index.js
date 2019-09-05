@@ -1,28 +1,28 @@
 (function() {
-
     var canvas = document.getElementById("glcanvas");
-    var gl;
-    var contexts = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"]; 
-    for (var i = 0; i < contexts.length; i++) {
-        try {
-            var context = contexts[i];
-            gl = canvas.getContext(context);
-        } catch (error) {
-            
-        }
-        if(gl)
-        {
-            break;
-        }
-        if(!gl)
-        {
-            alert("WebGL tidak ditemukan. Tolong gunakan Chrome/Firefox terbaru.")
-        }
-    }
+    var gl = glUtils.checkWebGL(canvas);
 
-    //Bersihkan layar jadi hitam
+    var vertexSourceCode = 
+        'void main() {\n' +
+        'gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n' +
+        'gl_PointSize = 10.0;\n' +
+        '}';
+
+    var fragmentSourceCode =
+        'void main() {\n' +
+        'gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);\n' +
+        '}';
+
+    var vertexShader = glUtils.getShader(gl, gl.VERTEX_SHADER, vertexSourceCode);
+    var fragmentShader = glUtils.getShader(gl, gl.FRAGMENT_SHADER, fragmentSourceCode);
+    var program = glUtils.createProgram(gl, vertexShader, fragmentShader);
+
+    gl.useProgram(program);
+
+    //bersihkan layar jd hitam
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    //Bersihkan buffernya canvas
+    //bersihkan buffernya canvas
     gl.clear(gl.COLOR_BUFFER_BIT);
-  
+
+    gl.drawArrays(gl.POINTS, 0, 1);
 })();
